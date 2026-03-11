@@ -1,6 +1,6 @@
 import { Webhook } from "lucide-react";
 
-export interface NodeDefinitions{
+export interface NodeDefinition{
     type:string;
     label:string;
     description:string;
@@ -19,7 +19,7 @@ export interface ConfigFeild{
     required?:boolean;
     defaultValue?:any;
 }
-export const nodeDefinitions:Record<string,NodeDefinitions>={
+export const nodeDefinitions:Record<string,NodeDefinition>={
     webhook:{
         type:"webhook",
         label:"webhook Trigger",
