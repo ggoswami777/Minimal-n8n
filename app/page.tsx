@@ -1,5 +1,6 @@
 "use client"
 import CustomNode from "@/components/CustomNode";
+import NodeConfigPanel from "@/components/NodeConfigPanel";
 import Sidebar from "@/components/Sidebar";
 import { nodeDefinitions } from "@/lib/node-definitions";
 import { useWorkflowStore } from "@/lib/store";
@@ -136,9 +137,9 @@ export default function Home() {
           </Panel>
         </ReactFlow>
       </div>
-      {/* {selectedNodeId && (
+      {selectedNodeId && (
         <NodeConfigPanel nodeId={selectedNodeId} onClose={()=>setSelectedNodeId(null)}/>
-      )} */}
+      )}
     </div>
 
   );

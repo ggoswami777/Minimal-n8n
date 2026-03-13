@@ -7,6 +7,7 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Select } from "./ui/select";
 import { Textarea } from "./ui/textarea";
+import { Button } from "./ui/button";
 
 interface NodeConfigPanelProps{
     nodeId:string;
@@ -24,6 +25,13 @@ export default function NodeConfigPanel({
             setConfig(node.data.config);
         }
     },[node])
+    const handleSave=()=>{
+        updateNode(nodeId,{config});
+        onClose();
+    }
+    const handleChange=(name:string,value:any)=>{
+        setConfig((prev)=>({...prev,[name]:value}));
+    }
     if(!node) return ;
     const definition=nodeDefinitions[node.data.type];
     if(!definition){
@@ -77,6 +85,7 @@ export default function NodeConfigPanel({
                              onChange={(e)=>handleChange(field.name,e.target.value)}
                              placeholder={field.placeholder}
                              className="mt-1 font-mono text-sm"
+                             rows={6}
                               />
                         )}
                         {field.type === "select" && (
@@ -95,6 +104,20 @@ export default function NodeConfigPanel({
                         )}
                     </div>
                 ))}
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex gap-2">
+                    <Button onClick={handleSave} className="flex-1">Save Configutation</Button>
+                    <Button variant="outline" onClick={onClose}>Cancel</Button>
+                </div>
+                {node.data.output && (
+                    <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 overflow-x-auto">
+                            Last Output
+                        </h4>
+                        <pre className="text-xs text-gray-600 dark:text-gray-400 overflow-x-auto">
+                            {JSON.stringify(node.data.output,null,2)}
+                        </pre>
+                    </div>
+                )}
              </div>
         </div>
     )
