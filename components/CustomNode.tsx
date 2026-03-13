@@ -58,8 +58,8 @@ function CustomNode({data,id,selected}:NodeProps<WorkflowNode["data"]>){
                     </div>
                 )}
             </div>
-            <Handle type="source" position={Position.Right} className="!w-3 !h-3 !bg-blue-500 !border-2 !border-white"/>
         </div>
+    <Handle type="target" position={Position.Right} className="!w-3 !h-3 !bg-blue-500 !border-2 !border-white"/>
     </div>
     )
 }
