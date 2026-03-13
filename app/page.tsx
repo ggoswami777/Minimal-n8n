@@ -20,17 +20,35 @@ export default function Home() {
   const [,,onEdgesChange]=useEdgesState([]);
   const [isExecuting,setIsExecuting]=useState(false);
   const [selectedNodeId,setSelectedNodeId]=useState<string|null>(null);
-  const handleEdgesChange:OnEdgesChange=useCallback(
-    (changes)=>{
+  const onConnect:OnConnect=useCallback(
+    (connection:Connection)=>{
+      const edge={
+        ...connection,
+        id:`e${connection.source}-${connection.target}`,
+        type:"smoothstep",
+        animated:true
+      };
+      addEdge(edge as any);
+    },[addEdge]
+  )
+  const onNodeDoubleClick=useCallback(
+    (event:React.MouseEvent,node:any)=>{
+      setSelectedNodeId(node.id);
+
+    },[]
+  )
+  const handleEdgesChange: OnEdgesChange = useCallback(
+    (changes) => {
       onEdgesChange(changes);
       changes.forEach((change)=>{
         if(change.type==="remove"){
-          const{edges:currentE}
+          const{edges:currentEdges}=useWorkflowStore.getState();
+          setEdges(currentEdges.filter((edge)=>edge.id!==change.id));
         }
       })
-    }
+    },[edges,onEdgesChange,setEdges]
   )
-  const handleNodeChange:OnNodeChange=useCallback(
+  const handleNodesChange:OnNodesChange=useCallback(
     (changes)=>{
       onNodesChange(changes);
       changes.forEach((change)=>{
@@ -41,7 +59,7 @@ export default function Home() {
         else if(change.type==="position" && "position" in change){
           const node=nodes.find((n)=>n.id===change.id);
           if(node && change.position){
-            const updateNodes=nodes.map((node)=> node.id===change.id ?{...node,position:change.position!}:node)
+            const updateNodes=nodes.map((n)=> n.id===change.id ?{...n,position:change.position!}:n)
             setNodes(updateNodes);
           }
         }
@@ -86,8 +104,8 @@ export default function Home() {
         <ReactFlow  
         nodes={nodes}
         edges={edges}
-        onNodesChange={handleNodeChange as onNodesChange}
-        onEdgesChange={onEdgesChange}
+        onNodesChange={handleNodesChange as OnNodesChange}
+        onEdgesChange={ handleEdgesChange as OnEdgesChange}
         onConnect={onConnect}
         onNodeDoubleClick={onNodeDoubleClick}
         onInit={setReactFlowInstance}
