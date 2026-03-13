@@ -4,6 +4,8 @@ import { useWorkflowStore } from "@/lib/store";
 import { X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { Select } from "./ui/select";
 
 interface NodeConfigPanelProps{
     nodeId:string;
@@ -59,7 +61,7 @@ export default function NodeConfigPanel({
                               />
                         )}
                         {field.type === "number" && (
-                             <input 
+                             <Input
                              type="number"
                              value={config[field.name] || field.defaultValue || "" }
                              onChange={(e)=>handleChange(field.name,e.target.value)}
