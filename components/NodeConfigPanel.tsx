@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Select } from "./ui/select";
+import { Textarea } from "./ui/textarea";
 
 interface NodeConfigPanelProps{
     nodeId:string;
@@ -70,7 +71,7 @@ export default function NodeConfigPanel({
                               />
                         )}
                         {field.type === "textarea" && (
-                             <TextArea
+                             <Textarea
                              
                              value={config[field.name] || field.defaultValue || "" }
                              onChange={(e)=>handleChange(field.name,e.target.value)}
