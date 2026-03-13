@@ -20,6 +20,16 @@ export default function Home() {
   const [,,onEdgesChange]=useEdgesState([]);
   const [isExecuting,setIsExecuting]=useState(false);
   const [selectedNodeId,setSelectedNodeId]=useState<string|null>(null);
+  const handleEdgesChange:OnEdgesChange=useCallback(
+    (changes)=>{
+      onEdgesChange(changes);
+      changes.forEach((change)=>{
+        if(change.type==="remove"){
+          const{edges:currentE}
+        }
+      })
+    }
+  )
   const handleNodeChange:OnNodeChange=useCallback(
     (changes)=>{
       onNodesChange(changes);
@@ -36,6 +46,7 @@ export default function Home() {
           }
         }
       })
+      console.log(nodes);
     },[nodes,onNodesChange,setNodes]
   )
   const onDrop=useCallback(
@@ -77,6 +88,8 @@ export default function Home() {
         edges={edges}
         onNodesChange={handleNodeChange as onNodesChange}
         onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onNodeDoubleClick={onNodeDoubleClick}
         onInit={setReactFlowInstance}
         onDrop={onDrop}
         nodeTypes={nodeTypes}
@@ -86,9 +99,28 @@ export default function Home() {
         >
           <Background color="#aaa"/>
           <Controls/>
-          <MiniMap/>
+          <MiniMap
+          nodeColor={(node)=>{
+            const definition=nodeDefinitions[node.data.type];
+            return definition?.color.includes("gradient")?"#8b5cf6":definition?.color.replace("bg-","") || "#6366f1"
+          }}
+          className="bg-white dark:bg-gray-800"
+          />
+          <Panel position="top-center" className="bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="text-sm text-gray-600 dark:text-gray-400 ">
+              <span className="font-semibold text-gray-900 dark:text-white">{nodes.length}</span>{" "}
+              nodes.{" "}
+              <span className="font-semibold text-gray-900 dark:text-white">
+                {edges.length}
+              </span>{" "}
+              connections
+            </div>
+          </Panel>
         </ReactFlow>
       </div>
+      {/* {selectedNodeId && (
+        <NodeConfigPanel nodeId={selectedNodeId} onClose={()=>setSelectedNodeId(null)}/>
+      )} */}
     </div>
 
   );
