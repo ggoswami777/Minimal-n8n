@@ -38,6 +38,14 @@ export default function Home() {
 
     },[]
   )
+  const executeWorkflow=async()=>{
+    if(nodes.length==0){
+      alert("Add some nodes to workflow")
+      return;
+    }
+    setIsExecuting(true);
+    const executor=new WorkflowExecutor();
+  }
   const handleEdgesChange: OnEdgesChange = useCallback(
     (changes) => {
       onEdgesChange(changes);

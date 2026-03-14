@@ -35,3 +35,14 @@ export interface WorkflowState{
 
 
 }
+export interface NodeExecutionContext{
+    nodeId:string;
+    input:any;
+    config:Record<string,any>;
+    previousNodes:Record<string,any>;
+}
+export interface NodeExecutionResult{
+    success:boolean;
+    output?:any;
+    error?:string;
+}
