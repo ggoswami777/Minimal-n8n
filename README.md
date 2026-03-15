@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Minimal n8n
 
-## Getting Started
+![Minimal n8n Dashboard](./public/screenshot.png)
 
-First, run the development server:
+A lightweight, high-performance, and AI-first workflow automation tool. Built with Next.js, ReactFlow, and Google Gemini, **Minimal n8n** allows you to build complex AI pipelines with zero complexity.
 
+## ✨ Key Features
+
+- **AI-First Chaining**: Seamlessly pass data between AI nodes (Chatbot, Text Generator, Analyzer, etc.) without manual variable mapping.
+- **Smart Input Ingest**: Connect nodes in a line and watch data flow. If an input is left blank, the node automatically ingests the last output.
+- **Modern Workflow Canvas**: A sleek, minimal UI inspired by n8n, optimized for clarity and speed.
+- **Powerful Logic Nodes**: Includes If/Else branching based on JavaScript expressions and customizable Delays.
+- **Integrated Actions**: Send emails, make HTTTP requests, and transform data using custom JavaScript.
+
+## 🚀 Quick Start
+
+### 1. Clone the repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/ggoswami777/Minimal-n8n.git
+cd Minimal-n8n
 ```
 
+### 2. Install dependencies
+```bash
+npm install
+```
+
+### 3. Set up environment variables
+Create a `.env.local` file in the root directory and add your Google Gemini API key:
+```env
+GEMINI_API_KEY=your_api_key_here
+```
+
+### 4. Run the development server
+```bash
+npm run dev
+```
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Technology Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework**: Next.js 14
+- **Workflow UI**: ReactFlow
+- **AI Core**: Google Gemini API (@google/generative-ai)
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
 
-## Learn More
+## 💡 Showcase Workflow
 
-To learn more about Next.js, take a look at the following resources:
+1. **Trigger**: Add a **Webhook** or **Schedule** node.
+2. **AI Logic**: Connect an **AI Chatbot** to generate ideas.
+3. **Execution**: Connect an **AI Text Generator** (leave its prompt field blank to use the Chatbot's output).
+4. **Analysis**: Chain an **AI Content Analyzer** to verify sentiment.
+5. **Action**: Connect a **Send Email** node to automate the delivery.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📄 License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License.
