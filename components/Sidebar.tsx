@@ -7,9 +7,10 @@ import { Play, Trash2 } from 'lucide-react';
 
 interface SidebarProps{
     onExecute:()=>void;
-    isExecuting:boolean
+    isExecuting:boolean;
+    onDelete?: () => void;
 }
-export default function Sidebar({onExecute,isExecuting}:SidebarProps){
+export default function Sidebar({onExecute,isExecuting, onDelete}:SidebarProps){
     const {clearWorkflow}=useWorkflowStore();
     const onDragStart=(event:React.DragEvent,nodeType:string)=>{
         event.dataTransfer.setData("application/reactflow",nodeType);
@@ -38,9 +39,8 @@ export default function Sidebar({onExecute,isExecuting}:SidebarProps){
                         <Play className='mr-2 h-4 w-4'></Play>
                         {isExecuting?"Running":"Execute"}
                     </Button>
-                    <Button variant='outline' onClick={clearWorkflow} >
+                    <Button variant='outline' onClick={onDelete || clearWorkflow} >
                         <Trash2 className='w-4 h-4'/>
-                        
                     </Button>
                 </div>
             </div>

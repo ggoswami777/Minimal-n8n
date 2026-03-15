@@ -1,7 +1,7 @@
 "use client";
 import { nodeDefinitions } from "@/lib/node-definitions";
 import { useWorkflowStore } from "@/lib/store";
-import { X } from "lucide-react";
+import { X, Copy, Check } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
@@ -20,6 +20,28 @@ export default function NodeConfigPanel({
     const {nodes,updateNode}=useWorkflowStore();
     const node=nodes.find((n)=>n.id===nodeId);
     const [config,setConfig]=useState<Record<string,any>>(node?.data.config || {});
+    const [copied, setCopied] = useState(false);
+    
+    const getMainOutput = (output: any) => {
+        if (!output) return "";
+        if (typeof output === "string") return output;
+        if (output.generatedText) return output.generatedText;
+        if (output.response) return output.response;
+        if (output.result) return output.result;
+        if (output.extractedData) return typeof output.extractedData === "string" ? output.extractedData : JSON.stringify(output.extractedData, null, 2);
+        if (output.sentData) return `Sent To: ${output.sentData.to}\nSubject: ${output.sentData.subject}\nBody:\n${output.sentData.body}`;
+        if (output.condition !== undefined) return JSON.stringify(output, null, 2);
+        return typeof output === "object" ? JSON.stringify(output, null, 2) : String(output);
+    };
+
+    const handleCopy = () => {
+        const textToCopy = getMainOutput(node?.data?.output);
+        if (textToCopy) {
+            navigator.clipboard.writeText(textToCopy);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
+    };
     useEffect(()=>{
         if(node?.data.config){
             setConfig(node.data.config);
@@ -108,13 +130,28 @@ export default function NodeConfigPanel({
                     <Button onClick={handleSave} className="flex-1">Save Configutation</Button>
                     <Button variant="outline" onClick={onClose}>Cancel</Button>
                 </div>
+                {node.data.error && (
+                    <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                        <h4 className="text-sm font-semibold text-red-600 dark:text-red-400 mb-2">
+                            Execution Error
+                        </h4>
+                        <pre className="text-xs text-red-600 dark:text-red-400 overflow-y-auto max-h-64 whitespace-pre-wrap">
+                            {String(node.data.error)}
+                        </pre>
+                    </div>
+                )}
                 {node.data.output && (
                     <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 overflow-x-auto">
-                            Last Output
-                        </h4>
-                        <pre className="text-xs text-gray-600 dark:text-gray-400 overflow-x-auto">
-                            {JSON.stringify(node.data.output,null,2)}
+                        <div className="flex justify-between items-center mb-2">
+                            <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                                Last Output
+                            </h4>
+                            <button onClick={handleCopy} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                                {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                            </button>
+                        </div>
+                        <pre className="text-xs text-gray-600 dark:text-gray-400 overflow-y-auto max-h-96 whitespace-pre-wrap break-words">
+                            {getMainOutput(node.data.output)}
                         </pre>
                     </div>
                 )}

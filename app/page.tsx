@@ -168,7 +168,21 @@ export default function Home() {
   },[])
   return (
     <div className="flex h-screen w-screen bg-gray-100 dark:bg-gray-950">
-      <Sidebar onExecute={executeWorkflow} isExecuting={isExecuting} ></Sidebar>
+      <Sidebar 
+          onExecute={executeWorkflow} 
+          isExecuting={isExecuting} 
+          onDelete={() => {
+              if (selectedNodeId) {
+                  useWorkflowStore.getState().deleteNode(selectedNodeId);
+                  setSelectedNodeId(null);
+              } else {
+                  if (window.confirm("Are you sure you want to clear the entire workflow?")) {
+                      useWorkflowStore.getState().clearWorkflow();
+                      setSelectedNodeId(null);
+                  }
+              }
+          }} 
+      />
       <div className="flex-1" ref={reactFlowWrapper}>
         <ReactFlow  
         nodes={nodes}

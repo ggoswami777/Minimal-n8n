@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+function extractStringInput(input: any): string {
+    if (!input) return "";
+    if (typeof input === "string") return input;
+    if (input.generatedText) return input.generatedText;
+    if (input.response) return input.response;
+    if (input.result) return input.result;
+    if (input.extractedData) return typeof input.extractedData === "string" ? input.extractedData : JSON.stringify(input.extractedData);
+    if (input.output) return typeof input.output === "string" ? input.output : JSON.stringify(input.output);
+    return JSON.stringify(input);
+}
+
 function replaceTemplateVariables(text:string,input:any):string{
     if(!text || typeof text!=="string"){
         return text;
@@ -78,17 +89,17 @@ async function executeTextGenerator(config:any,input:any,genAI:GoogleGenerativeA
     let {prompt,temperature,maxTokens}=config;
     prompt=replaceTemplateVariables(prompt,input);
     if (!prompt) {
-        prompt = typeof input === 'string' ? input : JSON.stringify(input);
+        prompt = extractStringInput(input);
     }
     console.log("Executing text generator with prompt:", prompt?.substring(0,50));
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", generationConfig: {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite", generationConfig: {
         temperature: parseFloat(temperature || "0.7"),
         maxOutputTokens: parseFloat(maxTokens || "500")
     }});
     const result = await model.generateContent(prompt);
     return {
         generatedText: result.response.text(),
-        model: "gemini-2.5-flash",
+        model: "gemini-2.5-flash-lite",
     };
 }
 
@@ -96,11 +107,7 @@ async function executeAnalyzer(config:any,input:any,genAI:GoogleGenerativeAI){
     let {text,analysisType}=config;
     text=replaceTemplateVariables(text,input);
     if (!text) {
-        if (input && input.generatedText) {
-            text = input.generatedText;
-        } else {
-            text = typeof input === 'string' ? input : JSON.stringify(input);
-        }
+        text = extractStringInput(input);
     }
     let systemPrompt=""
     switch (analysisType){
@@ -114,7 +121,7 @@ async function executeAnalyzer(config:any,input:any,genAI:GoogleGenerativeAI){
             systemPrompt="provide a concise summary of following text in 2-3 sentences";
             break;
     }
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", generationConfig: { temperature: 0.3 }});
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite", generationConfig: { temperature: 0.3 }});
     const prompt = systemPrompt + "\n\nText: " + text;
     const result = await model.generateContent(prompt);
     return {
@@ -126,11 +133,13 @@ async function executeAnalyzer(config:any,input:any,genAI:GoogleGenerativeAI){
 async function executeChatbot(config:any,input:any,genAI:GoogleGenerativeAI){
     let {systemPrompt, userMessage, personality}=config;
     systemPrompt = replaceTemplateVariables(systemPrompt || "", input);
-    userMessage = replaceTemplateVariables(userMessage || "", input);
+    if (!userMessage) {
+        userMessage = extractStringInput(input);
+    }
     
     const instruction = systemPrompt + (personality ? `\nPersonality: ${personality}` : "");
     const model = genAI.getGenerativeModel({ 
-        model: "gemini-2.5-flash", 
+        model: "gemini-2.5-flash-lite", 
         systemInstruction: instruction,
         generationConfig: { temperature: 0.7 } 
     });
@@ -138,16 +147,19 @@ async function executeChatbot(config:any,input:any,genAI:GoogleGenerativeAI){
     
     return {
         response: result.response.text(),
-        model: "gemini-2.5-flash",
+        model: "gemini-2.5-flash-lite",
     };
 }
 
 async function executeDataExtractor(config:any,input:any,genAI:GoogleGenerativeAI){
     let {text, schema}=config;
     text = replaceTemplateVariables(text || "", input);
+    if (!text) {
+        text = extractStringInput(input);
+    }
     let systemPrompt = `Extract information from the provided text according to this JSON schema: ${schema}. Return ONLY valid JSON matching the schema. Do not return markdown.`;
     
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", generationConfig: { temperature: 0.1 } });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite", generationConfig: { temperature: 0.1 } });
     const prompt = systemPrompt + "\n\nText: " + text;
     const result = await model.generateContent(prompt);
     
@@ -163,6 +175,7 @@ async function executeDataExtractor(config:any,input:any,genAI:GoogleGenerativeA
     
     return {
         extractedData,
-        model: "gemini-2.5-flash",
+        model: "gemini-2.5-flash-lite",
     };
+   
 }
