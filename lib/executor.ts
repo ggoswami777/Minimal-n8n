@@ -149,17 +149,14 @@ export class WorkflowExecutor{
      }
      private async executeDelay(config: Record<string, any>, input: any): Promise<NodeExecutionResult> {
         const { duration, unit } = config;
-        let ms = parseInt(duration || "1000", 10);
+        let ms = parseInt(duration ?? "1000", 10);
         if (unit === "seconds") {
             ms *= 1000;
         }
         await new Promise((resolve) => setTimeout(resolve, ms));
         return {
             success: true,
-            output: {
-                delayed: ms,
-                input,
-            }
+            output: input
         };
      }
      

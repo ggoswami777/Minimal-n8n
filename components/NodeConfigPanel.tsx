@@ -60,25 +60,25 @@ export default function NodeConfigPanel({
         return;
     }
     return(
-        <div className="fixed inset-y-0 right-0 w-96 bg-white dark:bg-gray-800 shadow-2xl border-l border-gray-200 dark:border-gray-700 z-50 overflow-y-auto">
-             <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark-border-gray-700 p-4 flex items-center justify-between">
+        <div className="fixed inset-y-0 right-0 w-96 bg-[#fafafa] shadow-xl border-l border-gray-200 z-50 overflow-y-auto">
+             <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    <h3 className="text-[17px] font-bold text-gray-900">
                         Configure Node
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="text-[12px] text-gray-500 mt-0.5">
                         {definition.label}
                     </p>
                     
                 </div>
-                <button className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" onClick={onClose}>
+                <button className="text-gray-400 hover:text-gray-600" onClick={onClose}>
                     <X className="w-5 h-5"/>
                 </button>
              </div>
              <div className="p-4 space-y-4">
                 {definition.configFields.map((field) => (
                     <div key={field.name}>
-                        <Label className="text-gray-700 dark:text-gray-300 ">
+                        <Label className="text-gray-400 text-xs font-semibold mb-2 block">
                             {field.label}
                             {field.required && <span className="text-red-500 ml-1">*</span>}
                         </Label>
@@ -88,69 +88,66 @@ export default function NodeConfigPanel({
                              value={config[field.name] || field.defaultValue || "" }
                              onChange={(e)=>handleChange(field.name,e.target.value)}
                              placeholder={field.placeholder}
-                             className="mt-1"
+                             className="w-full bg-[#111827] text-gray-100 border-none rounded p-3 text-sm font-mono placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-shadow"
                               />
                         )}
                         {field.type === "number" && (
-                             <Input
+                             <input
                              type="number"
                              value={config[field.name] || field.defaultValue || "" }
                              onChange={(e)=>handleChange(field.name,e.target.value)}
                              placeholder={field.placeholder}
-                             className="mt-1"
+                             className="w-full bg-[#111827] text-gray-100 border-none rounded p-3 text-sm font-mono placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-shadow"
                               />
                         )}
                         {field.type === "textarea" && (
-                             <Textarea
-                             
+                             <textarea
                              value={config[field.name] || field.defaultValue || "" }
                              onChange={(e)=>handleChange(field.name,e.target.value)}
                              placeholder={field.placeholder}
-                             className="mt-1 font-mono text-sm"
+                             className="w-full bg-[#111827] text-gray-100 border-none rounded p-3 text-sm font-mono placeholder-gray-600 resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 transition-shadow"
                              rows={6}
                               />
                         )}
                         {field.type === "select" && (
-                             <Select
-                            
+                             <select
                              value={config[field.name] || field.defaultValue || "" }
                              onChange={(e)=>handleChange(field.name,e.target.value)}
-                            
-                             className="mt-1"
+                             className="w-full bg-[#111827] text-gray-100 border-none rounded p-3 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-blue-500 transition-shadow"
                               >
                                 {field.options?.map((option)=>
                                 (
                                     <option value={option.value} key={option.value}>{option.label}</option>
                                 ))}
-                              </Select>
+                              </select>
                         )}
                     </div>
                 ))}
-                <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex gap-2">
-                    <Button onClick={handleSave} className="flex-1">Save Configutation</Button>
-                    <Button variant="outline" onClick={onClose}>Cancel</Button>
+                <div className="pt-4 flex gap-2">
+                    <Button onClick={handleSave} className="flex-[2] bg-blue-600 hover:bg-blue-700 text-white rounded shadow-sm border-none">Save Configutation</Button>
+                    <Button variant="outline" onClick={onClose} className="flex-1 bg-white text-gray-500 hover:text-gray-700 hover:bg-gray-50 border border-gray-300 shadow-sm rounded">Cancel</Button>
                 </div>
                 {node.data.error && (
-                    <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
-                        <h4 className="text-sm font-semibold text-red-600 dark:text-red-400 mb-2">
+                    <div className="mt-4 p-3 bg-red-50 rounded border border-red-100">
+                        <h4 className="text-[11px] font-semibold text-red-600 mb-1">
                             Execution Error
                         </h4>
-                        <pre className="text-xs text-red-600 dark:text-red-400 overflow-y-auto max-h-64 whitespace-pre-wrap">
+                        <pre className="text-[10px] text-red-600 overflow-y-auto max-h-64 whitespace-pre-wrap">
                             {String(node.data.error)}
                         </pre>
                     </div>
                 )}
                 {node.data.output && (
-                    <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div className="mt-4 p-3 bg-white rounded border border-gray-200 shadow-sm">
                         <div className="flex justify-between items-center mb-2">
-                            <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                            <h4 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
                                 Last Output
                             </h4>
-                            <button onClick={handleCopy} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                                {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                            <button onClick={handleCopy} className="text-gray-400 hover:text-gray-600 transition-colors">
+                                {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
                             </button>
                         </div>
-                        <pre className="text-xs text-gray-600 dark:text-gray-400 overflow-y-auto max-h-96 whitespace-pre-wrap break-words">
+                        <pre className="text-[11px] text-gray-700 overflow-y-auto max-h-96 whitespace-pre-wrap break-words">
                             {getMainOutput(node.data.output)}
                         </pre>
                     </div>

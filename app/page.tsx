@@ -2,6 +2,7 @@
 import CustomNode from "@/components/CustomNode";
 import NodeConfigPanel from "@/components/NodeConfigPanel";
 import Sidebar from "@/components/Sidebar";
+import { Lightbulb, X } from "lucide-react";
 import { WorkflowExecutor } from "@/lib/executor";
 import { nodeDefinitions } from "@/lib/node-definitions";
 import { useWorkflowStore } from "@/lib/store";
@@ -22,13 +23,15 @@ export default function Home() {
   const [,,onEdgesChange]=useEdgesState([]);
   const [isExecuting,setIsExecuting]=useState(false);
   const [selectedNodeId,setSelectedNodeId]=useState<string|null>(null);
+  const [showTips, setShowTips] = useState(true);
   const onConnect:OnConnect=useCallback(
     (connection:Connection)=>{
       const edge={
         ...connection,
         id:`e${connection.source}-${connection.target}`,
         type:"smoothstep",
-        animated:true
+        animated:true,
+        style: { stroke: '#a1a1aa', strokeWidth: 1.5 }
       };
       addEdge(edge as any);
     },[addEdge]
@@ -52,7 +55,6 @@ export default function Home() {
       setIsExecuting(false);
       return;
     }
-    // Reset the nodes
     nodes.forEach((node)=>{
       updateNode(node.id,{
         output:undefined,
@@ -60,7 +62,7 @@ export default function Home() {
         isExecuting:false,
       })
     })
-    // execute node in order
+
     const executedNodes=new Set<string>();
     const nodeOutputs:Record<string,any>={};
     const executeNodeChain=async(nodeId:string, input:any=null)=>{
@@ -133,7 +135,6 @@ export default function Home() {
           }
         }
       })
-      console.log(nodes);
     },[nodes,onNodesChange,setNodes]
   )
   const onDrop=useCallback(
@@ -163,9 +164,32 @@ export default function Home() {
   const onDragOver=useCallback((event:React.DragEvent)=>{
     event.preventDefault();
     event.dataTransfer.dropEffect="move";
-
-
   },[])
+
+  const handleAddNode = useCallback((type: string) => {
+    const definition = nodeDefinitions[type];
+    if (!definition) return;
+    
+    let position = { x: 250, y: 250 };
+    if (reactFlowInstance) {
+        position = reactFlowInstance.project({
+            x: window.innerWidth / 2,     
+            y: window.innerHeight / 2
+        });
+    }
+
+    const newNode: WorkflowNode = {
+      id: `node-${Date.now()}`,
+      type: "custom",
+      position,
+      data: {
+        label: definition.label,
+        type: definition.type,
+        config: { ...definition.defaultConfig, type: definition.type },
+      } as NodeData,
+    };
+    addNode(newNode);
+  }, [reactFlowInstance, addNode]);
   return (
     <div className="flex h-screen w-screen bg-gray-100 dark:bg-gray-950">
       <Sidebar 
@@ -182,8 +206,28 @@ export default function Home() {
                   }
               }
           }} 
+          onAddNode={handleAddNode}
       />
-      <div className="flex-1" ref={reactFlowWrapper}>
+      <div className="flex-1 relative" ref={reactFlowWrapper}>
+        {showTips && (
+          <div className="absolute top-4 right-4 z-50 bg-[#fff1f2] border border-[#ffccd5] rounded shadow-sm p-4 w-72">
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex items-center gap-1.5 text-[#e11d48]">
+                <Lightbulb className="w-3.5 h-3.5" />
+                <h4 className="text-xs font-semibold">Quick tips</h4>
+              </div>
+              <button onClick={() => setShowTips(false)} className="text-[#e11d48] hover:text-red-700 transition">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <p className="text-[11px] text-[#e11d48] mb-1.5 leading-tight">
+              Drag nodes to build and double-click to drop instantly.
+            </p>
+            <p className="text-[11px] text-[#e11d48] leading-tight">
+              Connect the flow, then execute when you're ready.
+            </p>
+          </div>
+        )}
         <ReactFlow  
         nodes={nodes}
         edges={edges}
@@ -196,22 +240,23 @@ export default function Home() {
         nodeTypes={nodeTypes}
         onDragOver={onDragOver}
         fitView
-        className="bg-gray-50 dark:bg-gray-900"
+        defaultEdgeOptions={{ type: 'smoothstep', style: { stroke: '#a1a1aa', strokeWidth: 1.5 } }}
+        className="bg-[#fafafa]"
         >
-          <Background color="#aaa"/>
-          <Controls/>
+          <Background color="#d4d4d8" gap={16} size={1} />
+          <Controls className="bg-white border-gray-200 shadow-sm" showInteractive={false} />
           <MiniMap
           nodeColor={(node)=>{
-            const definition=nodeDefinitions[node.data.type];
-            return definition?.color.includes("gradient")?"#8b5cf6":definition?.color.replace("bg-","") || "#6366f1"
+            return "#222222";
           }}
-          className="bg-white dark:bg-gray-800"
+          className="bg-white border border-gray-200 rounded shadow-sm"
+          maskColor="rgba(250, 250, 250, 0.7)"
           />
-          <Panel position="top-center" className="bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-            <div className="text-sm text-gray-600 dark:text-gray-400 ">
-              <span className="font-semibold text-gray-900 dark:text-white">{nodes.length}</span>{" "}
-              nodes.{" "}
-              <span className="font-semibold text-gray-900 dark:text-white">
+          <Panel position="top-center" className="bg-white px-4 py-2 mt-2 rounded border border-gray-200">
+            <div className="text-[11px] text-gray-500 font-medium">
+              <span className="font-bold text-gray-900">{nodes.length}</span>{" "}
+              nodes {" • "}
+              <span className="font-bold text-gray-900">
                 {edges.length}
               </span>{" "}
               connections
