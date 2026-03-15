@@ -163,7 +163,6 @@ export class WorkflowExecutor{
      private async executeHttpRequest(config: Record<string, any>, input: any): Promise<NodeExecutionResult> {
         try {
             const { method, url, headers, body } = config;
-            // Send request to the next.js proxy to avoid CORS issues
             const proxyResponse = await fetch("/api/httpProxy", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -191,7 +190,6 @@ export class WorkflowExecutor{
      private async executeDataTransform(config: Record<string, any>, input: any): Promise<NodeExecutionResult> {
          try {
              const { code } = config;
-             // Be very careful with eval/Function in production. Using new Function here for transforming data
              const transformFunction = new Function("input", code);
              const result = transformFunction(input);
              return {
@@ -215,7 +213,6 @@ export class WorkflowExecutor{
          
          if (typeof window !== "undefined") {
              const mailtoLink = `mailto:${encodeURIComponent(to || "")}?subject=${encodeURIComponent(subject || "")}&body=${encodeURIComponent(body || "")}`;
-             // Create an anchor element and click it to ensure it works across browsers
              const link = document.createElement("a");
              link.href = mailtoLink;
              link.target = "_blank";

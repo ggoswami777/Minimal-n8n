@@ -14,8 +14,8 @@ function CustomNode({data,id,selected}:NodeProps<WorkflowNode["data"]>){
     const showInput=definition.category!=="trigger";
     return(
         <div>
-        <div className={`relative bg-white dark:bg-gray-800 rounded-lg shadow-sm border transition-all hover:shadow-md 
-        ${selected?"border-gray-400":"border-gray-200 dark:border-gray-700"} ${data.isExecuting?"ring-1 ring-blue-400":""} ${data.error?"ring-1 ring-red-400":""} min-w-[250px]`}>
+        <div className={`relative bg-white rounded-lg shadow-sm border transition-all hover:shadow-md 
+        ${selected?"border-gray-400":"border-gray-200"} ${data.isExecuting?"ring-1 ring-blue-400":""} ${data.error?"ring-1 ring-red-400":""} min-w-[250px]`}>
             {showInput && (
                 <Handle type="target" position={Position.Left} className="!w-2 !h-2 !bg-[#f15b50] !border-none"/>
             )}
@@ -55,12 +55,12 @@ function CustomNode({data,id,selected}:NodeProps<WorkflowNode["data"]>){
                     </div>
                 ) }
                 {data.error &&(
-                    <div className="mt-2 text-xs bg-red-50 dark:bg-red-900/2 text-red-600 dark:text-red-400 p-2 rounded border border-red-200 dark:border-red-800">
+                    <div className="mt-2 text-xs bg-red-50 text-red-600 p-2 rounded border border-red-200">
                         {data.error}
                     </div>
                 )}
                 {!data.error && data.output &&(
-                    <div className="mt-2 text-xs bg-green-50 dark:bg-green-900/2 text-green-600 dark:text-green-400 p-2 rounded border border-green-200 dark:border-green-800">
+                    <div className="mt-2 text-xs bg-green-50 text-green-600 p-2 rounded border border-green-200">
                         Executed Successfully
                     </div>
                 )}

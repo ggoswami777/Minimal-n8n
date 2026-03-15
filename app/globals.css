@@ -3,25 +3,52 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  color-scheme: light !important;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  filter: none !important;
+  mix-blend-mode: normal !important;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: var(--foreground) !important;
   font-family: Arial, Helvetica, sans-serif;
-  caret-color: black;
+  caret-color: #000000 !important;
+}
+
+input, textarea, select {
+  caret-color: #000000 !important;
+  color: #111827 !important;
+}
+
+/* Force standard black cursors for all interactive elements */
+a, button, [role="button"], .cursor-pointer {
+  cursor: pointer !important;
+}
+
+.cursor-grab, .react-flow__pane {
+  cursor: grab !important;
+}
+
+.cursor-grabbing, .react-flow__pane:active {
+  cursor: grabbing !important;
+}
+
+.react-flow__handle, .cursor-crosshair {
+  cursor: crosshair !important;
+}
+
+.react-flow__node {
+  cursor: move !important;
+}
+
+.react-flow__edge {
+  cursor: pointer !important;
+}
+
+/* Ensure the typing cursor is always dark */
+::placeholder {
+  color: #6b7280 !important;
 }

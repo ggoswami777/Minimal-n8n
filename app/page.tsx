@@ -191,7 +191,7 @@ export default function Home() {
     addNode(newNode);
   }, [reactFlowInstance, addNode]);
   return (
-    <div className="flex h-screen w-screen bg-gray-100 dark:bg-gray-950">
+    <div className="flex h-screen w-screen bg-gray-100">
       <Sidebar 
           onExecute={executeWorkflow} 
           isExecuting={isExecuting} 

@@ -71,13 +71,6 @@ export async function POST(request:NextRequest){
         }
         return NextResponse.json(result);
     } catch (error:any) {
-        console.log("AI execution error :",error)
-        console.log("Error details",{
-            message:error.message,
-            stack:error.stack,
-            status:error.status,
-            response:error.response,
-        });
         return NextResponse.json({
             error:error.message || "AI execeution failed",
             details:error.status?`status:${error.status}`:undefined,
@@ -91,7 +84,6 @@ async function executeTextGenerator(config:any,input:any,genAI:GoogleGenerativeA
     if (!prompt) {
         prompt = extractStringInput(input);
     }
-    console.log("Executing text generator with prompt:", prompt?.substring(0,50));
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite", generationConfig: {
         temperature: parseFloat(temperature || "0.7"),
         maxOutputTokens: parseFloat(maxTokens || "500")

@@ -76,53 +76,71 @@ export default function NodeConfigPanel({
                 </button>
              </div>
              <div className="p-4 space-y-4">
-                {definition.configFields.map((field) => (
-                    <div key={field.name}>
-                        <Label className="text-gray-400 text-xs font-semibold mb-2 block">
-                            {field.label}
-                            {field.required && <span className="text-red-500 ml-1">*</span>}
-                        </Label>
-                        {field.type === "text" && (
-                             <input 
-                             type="text"
-                             value={config[field.name] || field.defaultValue || "" }
-                             onChange={(e)=>handleChange(field.name,e.target.value)}
-                             placeholder={field.placeholder}
-                             className="w-full bg-[#111827] text-gray-100 border-none rounded p-3 text-sm font-mono placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-shadow"
-                              />
-                        )}
-                        {field.type === "number" && (
-                             <input
-                             type="number"
-                             value={config[field.name] || field.defaultValue || "" }
-                             onChange={(e)=>handleChange(field.name,e.target.value)}
-                             placeholder={field.placeholder}
-                             className="w-full bg-[#111827] text-gray-100 border-none rounded p-3 text-sm font-mono placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-shadow"
-                              />
-                        )}
-                        {field.type === "textarea" && (
-                             <textarea
-                             value={config[field.name] || field.defaultValue || "" }
-                             onChange={(e)=>handleChange(field.name,e.target.value)}
-                             placeholder={field.placeholder}
-                             className="w-full bg-[#111827] text-gray-100 border-none rounded p-3 text-sm font-mono placeholder-gray-600 resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 transition-shadow"
-                             rows={6}
-                              />
-                        )}
-                        {field.type === "select" && (
-                             <select
-                             value={config[field.name] || field.defaultValue || "" }
-                             onChange={(e)=>handleChange(field.name,e.target.value)}
-                             className="w-full bg-[#111827] text-gray-100 border-none rounded p-3 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-blue-500 transition-shadow"
-                              >
-                                {field.options?.map((option)=>
-                                (
-                                    <option value={option.value} key={option.value}>{option.label}</option>
-                                ))}
-                              </select>
-                        )}
-                    </div>
-                ))}
+                {definition.configFields.map((field) => {
+                    const isMainAIField = ["prompt", "text", "userMessage", "body"].includes(field.name);
+                    const isUsingAuto = isMainAIField && (!config[field.name] || config[field.name] === "");
+
+                    return (
+                        <div key={field.name} className="space-y-1.5">
+                            <div className="flex justify-between items-end">
+                                <Label className="text-gray-400 text-[10px] font-bold uppercase tracking-wider block">
+                                    {field.label}
+                                    {field.required && <span className="text-red-500 ml-0.5">*</span>}
+                                </Label>
+                                {isMainAIField && (
+                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${isUsingAuto ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                                        {isUsingAuto ? "CONNECTED TO PREVIOUS" : "MANUAL INPUT"}
+                                    </span>
+                                )}
+                            </div>
+                            
+                            {field.type === "text" && (
+                                 <input 
+                                 type="text"
+                                 value={config[field.name] || "" }
+                                 onChange={(e)=>handleChange(field.name,e.target.value)}
+                                 placeholder={isMainAIField ? "Leave blank to use data from previous node..." : field.placeholder}
+                                 className="w-full bg-white text-gray-900 border border-gray-200 rounded p-3 text-sm font-mono placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-shadow transition-colors"
+                                  />
+                            )}
+                            {field.type === "number" && (
+                                 <input
+                                 type="number"
+                                 value={config[field.name] || field.defaultValue || "" }
+                                 onChange={(e)=>handleChange(field.name,e.target.value)}
+                                 placeholder={field.placeholder}
+                                 className="w-full bg-white text-gray-900 border border-gray-200 rounded p-3 text-sm font-mono placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-shadow transition-colors"
+                                  />
+                            )}
+                            {field.type === "textarea" && (
+                                 <textarea
+                                 value={config[field.name] || "" }
+                                 onChange={(e)=>handleChange(field.name,e.target.value)}
+                                 placeholder={isMainAIField ? "Leave blank to automatically ingest data from the previous connected node..." : field.placeholder}
+                                 className="w-full bg-white text-gray-900 border border-gray-200 rounded p-3 text-sm font-mono placeholder-gray-400 resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 transition-shadow transition-colors min-h-[120px]"
+                                 rows={6}
+                                  />
+                            )}
+                            {field.type === "select" && (
+                                 <select
+                                 value={config[field.name] || field.defaultValue || "" }
+                                 onChange={(e)=>handleChange(field.name,e.target.value)}
+                                 className="w-full bg-white text-gray-900 border border-gray-200 rounded p-3 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-blue-500 transition-shadow transition-colors"
+                                  >
+                                    {field.options?.map((option)=>
+                                    (
+                                        <option value={option.value} key={option.value}>{option.label}</option>
+                                    ))}
+                                  </select>
+                            )}
+                            {isMainAIField && isUsingAuto && (
+                                <p className="text-[10px] text-green-600 font-medium italic">
+                                     This node will automatically use the output from the previous node.
+                                </p>
+                            )}
+                        </div>
+                    );
+                })}
                 <div className="pt-4 flex gap-2">
                     <Button onClick={handleSave} className="flex-[2] bg-blue-600 hover:bg-blue-700 text-white rounded shadow-sm border-none">Save Configutation</Button>
                     <Button variant="outline" onClick={onClose} className="flex-1 bg-white text-gray-500 hover:text-gray-700 hover:bg-gray-50 border border-gray-300 shadow-sm rounded">Cancel</Button>
