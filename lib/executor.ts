@@ -36,12 +36,30 @@ export class WorkflowExecutor{
         
     }
     private async executeAINodeType(config:Record<string,any>,input:any):Promise<NodeExecutionResult>{
-        const result=this.executeAINode(config.type,config,input);
+        const result=await this.executeAINode(config.type,config,input);
         return{
             success:true,
             output:result,
         }
     }
+    private async executeAINode(type:string,config:Record<string,any>,input:any):Promise<any>{
+        try{
+            const response=await fetch("/api/ai/execute",{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({type,config,input})
+            })
+            if(!response.ok){
+                const error=await response.json();
+                throw new Error(error.error || "AI execution failed")
+            }
+            return await response.json();
+        }
+        catch(error:any){
+            throw new Error(error.message || "Failed to execute AI node"); 
+        }
+    }
+    
     private async executeTriggerNode(config:Record<string,any>,input:any):Promise<NodeExecutionResult>{
         return{
             success:true,
@@ -50,5 +68,21 @@ export class WorkflowExecutor{
                 config:config,
             }
         }
+     }
+
+     private async executeActionNode(config:Record<string,any>,input:any):Promise<NodeExecutionResult>{
+        // implement later
+        return {
+            success:true,
+            output: input || {}
+        };
+     }
+
+     private async executingLogicNode(config:Record<string,any>,input:any):Promise<NodeExecutionResult>{
+        // implement later
+        return {
+            success:true,
+            output: input || {}
+        };
      }
 }

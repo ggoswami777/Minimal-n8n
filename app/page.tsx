@@ -2,6 +2,7 @@
 import CustomNode from "@/components/CustomNode";
 import NodeConfigPanel from "@/components/NodeConfigPanel";
 import Sidebar from "@/components/Sidebar";
+import { WorkflowExecutor } from "@/lib/executor";
 import { nodeDefinitions } from "@/lib/node-definitions";
 import { useWorkflowStore } from "@/lib/store";
 import { NodeData, WorkflowNode } from "@/lib/types";
@@ -45,6 +46,65 @@ export default function Home() {
     }
     setIsExecuting(true);
     const executor=new WorkflowExecutor();
+    const triggerNodes=nodes.filter((node)=>!edges.some((edge)=>edge.target===node.id))
+    if(triggerNodes.length===0){
+      alert("Add a trigger node to start the flow");
+      setIsExecuting(false);
+      return;
+    }
+    // Reset the nodes
+    nodes.forEach((node)=>{
+      updateNode(node.id,{
+        output:undefined,
+        error:undefined,
+        isExecuting:false,
+      })
+    })
+    // execute node in order
+    const executedNodes=new Set<string>();
+    const nodeOutputs:Record<string,any>={};
+    const executeNodeChain=async(nodeId:string, input:any=null)=>{
+        if(executedNodes.has(nodeId)) return ;
+        const node=nodes.find((n)=>n.id===nodeId);
+        if(!node) return ;
+        executedNodes.add(nodeId);
+        updateNode(nodeId,{isExecuting:true,error:undefined});
+        try {
+          const result=await executor.executeNode({
+            nodeId:node.id,
+            input,
+            config:node.data.config || {},
+            previousNodes:nodeOutputs,
+          })
+          if(result.success){
+            updateNode(nodeId,{
+              output:result.output,
+              isExecuting:false,
+            })
+         
+          nodeOutputs[nodeId]=result.output;
+          const connectedEdges=edges.filter((edge)=>edge.source===nodeId);
+          for(const edge of connectedEdges){
+            await executeNodeChain(edge.target,result.output)
+          }
+         }
+         else{
+          updateNode(nodeId,{
+            error:result.error,
+            isExecuting:false,
+          })
+         }
+        } catch (error:any) {
+          updateNode(nodeId,{
+            error:error.message || "Executing failed",
+            isExecuting:false,
+          })
+        }
+    }
+    for(const triggerNode of triggerNodes){
+      await executeNodeChain(triggerNode.id)
+    }
+    setIsExecuting(false);
   }
   const handleEdgesChange: OnEdgesChange = useCallback(
     (changes) => {
@@ -108,7 +168,7 @@ export default function Home() {
   },[])
   return (
     <div className="flex h-screen w-screen bg-gray-100 dark:bg-gray-950">
-      <Sidebar ></Sidebar>
+      <Sidebar onExecute={executeWorkflow} isExecuting={isExecuting} ></Sidebar>
       <div className="flex-1" ref={reactFlowWrapper}>
         <ReactFlow  
         nodes={nodes}
