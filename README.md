@@ -1,6 +1,6 @@
 # Minimal n8n
 
-![Minimal n8n Dashboard](./public/screenshot.png)
+![Minimal n8n Dashboard](./public/image.png)
 
 A lightweight, high-performance, and AI-first workflow automation tool. Built with Next.js, ReactFlow, Google Gemini, and Groq, **Minimal n8n** allows you to build complex AI pipelines with zero complexity.
 
