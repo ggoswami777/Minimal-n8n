@@ -4,12 +4,18 @@ import { NodeExecutionContext,NodeExecutionResult } from "./types";
 function extractStringInput(input: any): string {
     if (!input) return "";
     if (typeof input === "string") return input;
-    if (input.generatedText) return input.generatedText;
-    if (input.response) return input.response;
-    if (input.result) return input.result;
-    if (input.extractedData) return typeof input.extractedData === "string" ? input.extractedData : JSON.stringify(input.extractedData);
-    if (input.output) return typeof input.output === "string" ? input.output : JSON.stringify(input.output);
-    return JSON.stringify(input);
+    
+    const data = input.output !== undefined ? input.output : input;
+    if (!data) return "";
+    if (typeof data === "string") return data;
+
+    if (data.generatedText) return data.generatedText;
+    if (data.response) return data.response;
+    if (data.result) return data.result;
+    if (data.extractedData) return typeof data.extractedData === "string" ? data.extractedData : JSON.stringify(data.extractedData);
+    if (data.output) return typeof data.output === "string" ? data.output : JSON.stringify(data.output);
+    
+    return typeof data === "object" ? JSON.stringify(data) : String(data);
 }
 export class WorkflowExecutor{
     async executeNode(context:NodeExecutionContext):Promise<NodeExecutionResult>{

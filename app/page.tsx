@@ -7,14 +7,14 @@ import { WorkflowExecutor } from "@/lib/executor";
 import { nodeDefinitions } from "@/lib/node-definitions";
 import { useWorkflowStore } from "@/lib/store";
 import { NodeData, WorkflowNode } from "@/lib/types";
-import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
 import ReactFlow, { Background,Controls,MiniMap, NodeTypes,OnConnect,OnNodesChange,OnEdgesChange,Panel,Connection,useNodesState, useEdgesState } from "reactflow";
 import "reactflow/dist/style.css";
-let nodeIdCounter=0;
+
 const nodeTypes:NodeTypes={
   custom:CustomNode,
 }
+
 export default function Home() {
   const {nodes,edges,addNode,addEdge,updateNode,setNodes,setEdges}=useWorkflowStore();
   const reactFlowWrapper=useRef<HTMLDivElement>(null);
@@ -24,6 +24,7 @@ export default function Home() {
   const [isExecuting,setIsExecuting]=useState(false);
   const [selectedNodeId,setSelectedNodeId]=useState<string|null>(null);
   const [showTips, setShowTips] = useState(true);
+
   const onConnect:OnConnect=useCallback(
     (connection:Connection)=>{
       const edge={
@@ -36,12 +37,13 @@ export default function Home() {
       addEdge(edge as any);
     },[addEdge]
   )
+
   const onNodeDoubleClick=useCallback(
     (event:React.MouseEvent,node:any)=>{
       setSelectedNodeId(node.id);
-
     },[]
   )
+
   const executeWorkflow=async()=>{
     if(nodes.length==0){
       alert("Add some nodes to workflow")
@@ -82,13 +84,12 @@ export default function Home() {
             updateNode(nodeId,{
               output:result.output,
               isExecuting:false,
-            })
-         
-          nodeOutputs[nodeId]=result.output;
-          const connectedEdges=edges.filter((edge)=>edge.source===nodeId);
-          for(const edge of connectedEdges){
-            await executeNodeChain(edge.target,result.output)
-          }
+            });
+            nodeOutputs[nodeId]=result.output;
+            const connectedEdges=edges.filter((edge)=>edge.source===nodeId);
+            for(const edge of connectedEdges){
+              await executeNodeChain(edge.target,result.output)
+            }
          }
          else{
           updateNode(nodeId,{
@@ -108,6 +109,7 @@ export default function Home() {
     }
     setIsExecuting(false);
   }
+
   const handleEdgesChange: OnEdgesChange = useCallback(
     (changes) => {
       onEdgesChange(changes);
@@ -117,8 +119,9 @@ export default function Home() {
           setEdges(currentEdges.filter((edge)=>edge.id!==change.id));
         }
       })
-    },[edges,onEdgesChange,setEdges]
+    },[onEdgesChange,setEdges]
   )
+
   const handleNodesChange:OnNodesChange=useCallback(
     (changes)=>{
       onNodesChange(changes);
@@ -137,6 +140,7 @@ export default function Home() {
       })
     },[nodes,onNodesChange,setNodes]
   )
+
   const onDrop=useCallback(
     (event:React.DragEvent)=>{
       event.preventDefault();
@@ -149,7 +153,7 @@ export default function Home() {
         y:event.clientY,
       })
       const newNode:WorkflowNode={
-        id:`node-${nodeIdCounter++}`,
+        id:`node-${Date.now()}`,
         type:"custom",
         position,
         data:{
@@ -161,6 +165,7 @@ export default function Home() {
       addNode(newNode);
     },[reactFlowInstance,addNode]
   )
+
   const onDragOver=useCallback((event:React.DragEvent)=>{
     event.preventDefault();
     event.dataTransfer.dropEffect="move";
@@ -190,6 +195,7 @@ export default function Home() {
     };
     addNode(newNode);
   }, [reactFlowInstance, addNode]);
+
   return (
     <div className="flex h-screen w-screen bg-gray-100">
       <Sidebar 
@@ -246,9 +252,7 @@ export default function Home() {
           <Background color="#d4d4d8" gap={16} size={1} />
           <Controls className="bg-white border-gray-200 shadow-sm" showInteractive={false} />
           <MiniMap
-          nodeColor={(node)=>{
-            return "#222222";
-          }}
+          nodeColor={(node)=> "#222222"}
           className="bg-white border border-gray-200 rounded shadow-sm"
           maskColor="rgba(250, 250, 250, 0.7)"
           />
@@ -268,6 +272,5 @@ export default function Home() {
         <NodeConfigPanel nodeId={selectedNodeId} onClose={()=>setSelectedNodeId(null)}/>
       )}
     </div>
-
   );
 }

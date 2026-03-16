@@ -103,16 +103,39 @@ export const nodeDefinitions: Record<string, NodeDefinition> = {
   aiTextGenerator: {
     type: "aiTextGenerator",
     label: "AI Text Generator",
-    description: "Generate text using Gemini",
+    description: "Generate content using powerful AI models",
     category: "ai",
     icon: Sparkles,
-    color: "bg-gradient-to-r from-pink-500 to-purple-500",
+    color: "bg-black",
     defaultConfig: {
       prompt: "Write a professional email",
       temperature: "0.7",
       maxTokens: "500",
     },
     configFields: [
+      {
+        name: "provider",
+        label: "AI Provider",
+        type: "select",
+        options: [
+          { value: "gemini", label: "Google Gemini" },
+          { value: "groq", label: "Groq" },
+        ],
+        defaultValue: "gemini",
+      },
+      {
+        name: "model",
+        label: "Model",
+        type: "select",
+        options: [
+          { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
+          { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash-Lite" },
+          { value: "llama-3.1-8b-instant", label: "Llama 3.1 8B (Groq)" },
+          { value: "llama-3.3-70b-versatile", label: "Llama 3.3 70B (Groq)" },
+          { value: "openai/gpt-oss-120b", label: "GPT OSS 120B (Groq)" },
+        ],
+        defaultValue: "gemini-2.5-flash",
+      },
       {
         name: "prompt",
         label: "Prompt",
@@ -140,15 +163,38 @@ export const nodeDefinitions: Record<string, NodeDefinition> = {
   aiAnalyzer: {
     type: "aiAnalyzer",
     label: "AI Content Analyzer",
-    description: "Analyze content with AI (sentiment, keywords, summary)",
+    description: "Analyze sentiment, keywords, or summarize text",
     category: "ai",
     icon: Brain,
-    color: "bg-gradient-to-r from-cyan-500 to-blue-500",
+    color: "bg-black",
     defaultConfig: {
       analysisType: "sentiment",
       text: "",
     },
     configFields: [
+      {
+        name: "provider",
+        label: "AI Provider",
+        type: "select",
+        options: [
+          { value: "gemini", label: "Google Gemini" },
+          { value: "groq", label: "Groq" },
+        ],
+        defaultValue: "gemini",
+      },
+      {
+        name: "model",
+        label: "Model",
+        type: "select",
+        options: [
+          { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
+          { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash-Lite" },
+          { value: "llama-3.1-8b-instant", label: "Llama 3.1 8B (Groq)" },
+          { value: "llama-3.3-70b-versatile", label: "Llama 3.3 70B (Groq)" },
+          { value: "openai/gpt-oss-120b", label: "GPT OSS 120B (Groq)" },
+        ],
+        defaultValue: "gemini-2.5-flash",
+      },
       {
         name: "text",
         label: "Text to Analyze",
@@ -173,16 +219,39 @@ export const nodeDefinitions: Record<string, NodeDefinition> = {
   aiChatbot: {
     type: "aiChatbot",
     label: "AI Chatbot",
-    description: "Generate chatbot responses",
+    description: "Interactive AI chatbot for conversational tasks",
     category: "ai",
     icon: MessageSquare,
-    color: "bg-gradient-to-r from-green-500 to-emerald-500",
+    color: "bg-black",
     defaultConfig: {
       systemPrompt: "You are a helpful assistant.",
       userMessage: "",
       personality: "professional",
     },
     configFields: [
+      {
+        name: "provider",
+        label: "AI Provider",
+        type: "select",
+        options: [
+          { value: "gemini", label: "Google Gemini" },
+          { value: "groq", label: "Groq" },
+        ],
+        defaultValue: "gemini",
+      },
+      {
+        name: "model",
+        label: "Model",
+        type: "select",
+        options: [
+          { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
+          { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash-Lite" },
+          { value: "llama-3.1-8b-instant", label: "Llama 3.1 8B (Groq)" },
+          { value: "llama-3.3-70b-versatile", label: "Llama 3.3 70B (Groq)" },
+          { value: "openai/gpt-oss-120b", label: "GPT OSS 120B (Groq)" },
+        ],
+        defaultValue: "gemini-2.5-flash",
+      },
       {
         name: "systemPrompt",
         label: "System Prompt",
@@ -214,15 +283,38 @@ export const nodeDefinitions: Record<string, NodeDefinition> = {
   aiDataExtractor: {
     type: "aiDataExtractor",
     label: "AI Data Extractor",
-    description: "Extract structured data from text",
+    description: "Extract structured JSON from unstructured text",
     category: "ai",
     icon: FileSearch,
-    color: "bg-gradient-to-r from-orange-500 to-red-500",
+    color: "bg-black",
     defaultConfig: {
       text: "",
       schema: '{"name": "string", "email": "string"}',
     },
     configFields: [
+      {
+        name: "provider",
+        label: "AI Provider",
+        type: "select",
+        options: [
+          { value: "gemini", label: "Google Gemini" },
+          { value: "groq", label: "Groq" },
+        ],
+        defaultValue: "gemini",
+      },
+      {
+        name: "model",
+        label: "Model",
+        type: "select",
+        options: [
+          { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
+          { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash-Lite" },
+          { value: "llama-3.1-8b-instant", label: "Llama 3.1 8B (Groq)" },
+          { value: "llama-3.3-70b-versatile", label: "Llama 3.3 70B (Groq)" },
+          { value: "openai/gpt-oss-120b", label: "GPT OSS 120B (Groq)" },
+        ],
+        defaultValue: "gemini-2.5-flash",
+      },
       {
         name: "text",
         label: "Text Input",
